@@ -1,0 +1,35 @@
+{% block content %}
+
+    <div>
+    <h5>{{ detailed_post.title }}</h5>
+    <p>{{ detailed_post.content }}</p>
+    <a href="{% url 'all_post' %}"> go back to your posts</a>
+    <a href="{% url 'edit_post' detailed_post.id %}">edit</a>
+
+    <div>
+        <form method="post" action="{% url 'delete_post' detailed_post.id %}">
+            {% csrf_token %}
+            <button type="submit">DELETE</button>
+        </form>
+    </div>
+
+    </div>
+{#    <h3>Comments</h3>#}
+{##}
+{#{% for c in comments %}#}
+{#  <div>#}
+{#    <strong>{{ c.name }}</strong> ({{ c.created_at }})#}
+{#    <div>{{ c.text }}</div>#}
+{#  </div>#}
+{#{% empty %}#}
+{#  <p>No comments yet.</p>#}
+{#{% endfor %}#}
+{##}
+{#<h4>Add comment</h4>#}
+{#<form method="post">#}
+{#  {% csrf_token %}#}
+{#  {{ comment_form.name }}#}
+{#  {{ comment_form.text }}#}
+{#  <button type="submit">Add</button>#}
+{#</form>#}
+{% endblock %}

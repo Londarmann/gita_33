@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <a href="{% url 'add_post' %}">create your own post</a>
+    {% for post in posts %}
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.content }}</p>
+        <a href="{% url 'detail_post' post.id %}">detail</a>
+        <a href="{% url 'edit_post' post.id %}">edit</a>
+        
+    {% endfor %}
+
+{% endblock %}
