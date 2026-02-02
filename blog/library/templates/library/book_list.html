@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Library</h1>
+
+<form method="get" action="{% url 'book_list' %}">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search by title" />
+
+    <select name="author">
+        <option value="">All authors</option>
+        {% for a in authors %}
+            <option value="{{ a.id }}" {% if author_id|stringformat:"s" == a.id|stringformat:"s" %}selected{% endif %}>
+                {{ a.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Search</button>
+</form>
+
+<hr>
+
+{% for book in books %}
+    <div>
+        <h3>
+            <a href="{% url 'book_detail' book.id %}">{{ book.title }}</a>
+        </h3>
+        <div>Author: {{ book.author.name }}</div>
+        <div>Year: {{ book.published_year }}</div>
+        <div>
+            Status:
+            {% if book.open_loans %}
+                Borrowed
+            {% else %}
+                Available
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+{% empty %}
+    <p>No books found.</p>
+{% endfor %}
+
+{% endblock %}

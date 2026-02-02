@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<a href="{% url 'book_list' %}">Back to books</a>
+
+<h1>{{ book.title }}</h1>
+<div>Author: {{ book.author.name }}</div>
+<div>Published year: {{ book.published_year }}</div>
+
+{% if book.tags.all %}
+    <div>
+        Tags:
+        {% for t in book.tags.all %}
+            <span>{{ t.name }}</span>
+        {% empty %}
+            <span>No tags</span>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<hr>
+
+{% if current_loan %}
+    <h3>Currently borrowed</h3>
+    <div>Student: {{ current_loan.student.full_name }}</div>
+    <div>Borrowed at: {{ current_loan.borrowed_at }}</div>
+
+    <form method="post" action="{% url 'library_return_loan' current_loan.id %}">
+        {% csrf_token %}
+        <button type="submit">Return</button>
+    </form>
+{% else %}
+    <h3>Borrow this book</h3>
+    <form method="post" action="{% url 'library_borrow_book' book.id %}">
+        {% csrf_token %}
+        {{ borrow_form.student }}
+        <button type="submit">Borrow</button>
+    </form>
+{% endif %}
+
+{% endblock %}
