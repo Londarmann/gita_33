@@ -2,7 +2,7 @@ from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .forms import BorrowForm
+from .forms import BorrowForm, BookForm, AuthorForm
 from .models import Author, Book, Loan
 
 
@@ -83,3 +83,38 @@ def return_loan(request, loan_id):
         loan.returned_at = timezone.now()
     loan.save(update_fields=['returned_at'])
     return redirect('book_detail', book_id=loan.book_id)
+
+
+def add_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST, request.FILES)
+        if form.is_valid():
+            book = form.save(commit=False)
+            book.save()
+            return redirect('book_detail', book_id=book.id)
+    else:
+        form = BookForm()
+    return render(request, 'library/add_book.html', {'form': form})
+
+
+def edit_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    if request.method == 'POST':
+        form = BookForm(request.POST, request.FILES, instance=book)
+        if form.is_valid():
+            book = form.save()
+            return redirect('book_detail', book_id=book.id)
+    else:
+        form = BookForm(instance=book)
+    return render(request, 'library/edit_book.html', {'form': form, 'book': book})
+
+
+def add_author(request):
+    if request.method == 'POST':
+        form = AuthorForm(request.POST)
+        if form.is_valid():
+            author = form.save()
+            return redirect('book_list')
+    else:
+        form = AuthorForm()
+    return render(request, 'library/add_author.html', {'form': form})

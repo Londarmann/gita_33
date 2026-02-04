@@ -1,44 +1,57 @@
 {% extends 'base.html' %}
+
+{% block title %}წიგნები{% endblock %}
+
 {% block content %}
 
-<h1>Library</h1>
+<h1>ბიბლიოთეკა</h1>
 
-<form method="get" action="{% url 'book_list' %}">
-    <input type="text" name="q" value="{{ q }}" placeholder="Search by title" />
-
-    <select name="author">
-        <option value="">All authors</option>
-        {% for a in authors %}
-            <option value="{{ a.id }}" {% if author_id|stringformat:"s" == a.id|stringformat:"s" %}selected{% endif %}>
-                {{ a.name }}
-            </option>
-        {% endfor %}
-    </select>
-
-    <button type="submit">Search</button>
+<form method="get" action="{% url 'book_list' %}" class="book-card">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <input type="text" name="q" placeholder="მოძებნე წიგნი..." value="{{ q }}" class="form-control" style="flex: 1; min-width: 200px;">
+        <select name="author" class="form-control" style="flex: 1; min-width: 150px;">
+            <option value="">ყველა ავტორი</option>
+            {% for author in authors %}
+                <option value="{{ author.id }}" {% if author_id == author.id|stringformat:"s" %}selected{% endif %}>
+                    {{ author.name }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">ძებნა</button>
+    </div>
 </form>
 
-<hr>
+<div class="grid">
+    {% for book in books %}
+        <div class="book-card">
+            {% if book.cover %}
+                <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="book-cover">
+            {% endif %}
 
-{% for book in books %}
-    <div>
-        <h3>
-            <a href="{% url 'book_detail' book.id %}">{{ book.title }}</a>
-        </h3>
-        <div>Author: {{ book.author.name }}</div>
-        <div>Year: {{ book.published_year }}</div>
-        <div>
-            Status:
+            <h3><a href="{% url 'book_detail' book.id %}">{{ book.title }}</a></h3>
+            <p class="text-muted">{{ book.author.name }}</p>
+            <p>{{ book.published_year|default:"წელი უცნობია" }}</p>
+
+            {# სტატუსი #}
             {% if book.open_loans %}
-                Borrowed
+                <span class="badge badge-borrowed">
+                    გატანილია: {{ book.open_loans.0.student.full_name }}
+                </span>
             {% else %}
-                Available
+                <span class="badge badge-available">ხელმისაწვდომი</span>
+            {% endif %}
+
+            {% if book.tags.all %}
+                <div class="mt-20">
+                    {% for tag in book.tags.all %}
+                        <span class="tag">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
             {% endif %}
         </div>
-    </div>
-    <hr>
-{% empty %}
-    <p>No books found.</p>
-{% endfor %}
+    {% empty %}
+        <p>წიგნები ვერ მოიძებნა.</p>
+    {% endfor %}
+</div>
 
 {% endblock %}

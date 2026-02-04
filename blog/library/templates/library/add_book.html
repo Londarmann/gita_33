@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}წიგნის დამატება{% endblock %}
+
+{% block content %}
+<h1>წიგნის დამატება</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+
+    <div class="form-group">
+        <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+        {{ form.title }}
+        {% if form.title.help_text %}
+            <small class="help-text">{{ form.title.help_text }}</small>
+        {% endif %}
+        {{ form.title.errors }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.author.id_for_label }}">{{ form.author.label }}</label>
+        {{ form.author }}
+        {{ form.author.errors }}
+        <small class="help-text">
+            ავტორი არ არის? <a href="{% url 'add_author' %}">დაამატე ახალი</a>
+        </small>
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.published_year.id_for_label }}">{{ form.published_year.label }}</label>
+        {{ form.published_year }}
+        {{ form.published_year.errors }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.cover.id_for_label }}">{{ form.cover.label }}</label>
+        {{ form.cover }}
+        {% if form.cover.help_text %}
+            <small class="help-text">{{ form.cover.help_text }}</small>
+        {% endif %}
+        {{ form.cover.errors }}
+    </div>
+
+    <div class="form-group">
+        <label>
+            {{ form.is_active }}
+            {{ form.is_active.label }}
+        </label>
+    </div>
+
+    <div class="form-group">
+        <label>{{ form.tags.label }}</label>
+        {% if form.tags.help_text %}
+            <small class="help-text">{{ form.tags.help_text }}</small>
+        {% endif %}
+        <div>
+            {% for checkbox in form.tags %}
+                <label style="display: block; margin: 5px 0;">
+                    {{ checkbox.tag }}
+                    {{ checkbox.choice_label }}
+                </label>
+            {% endfor %}
+        </div>
+        {{ form.tags.errors }}
+    </div>
+
+    {% if form.non_field_errors %}
+        <div class="errorlist">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-success">შენახვა</button>
+{#    <a href="{% url 'book_list' %}" class="btn btn-primary">გაუქმება</a>#}
+</form>
+
+<hr class="mt-20">
+
+
+{% endblock %}

@@ -29,6 +29,7 @@ class Book(models.Model):
     published_year = models.IntegerField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
+    cover = models.ImageField(upload_to='book_covers/', null=True, blank=True)
     author = models.ForeignKey(Author, on_delete=models.PROTECT, related_name='books')
     tags = models.ManyToManyField(Tag, blank=True, related_name='books')
 

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }} - რედაქტირება{% endblock %}
+
+{% block content %}
+<h1>წიგნის რედაქტირება: {{ book.title }}</h1>
+
+{% if book.cover %}
+    <div class="mb-20">
+        <p><strong>მიმდინარე გარეკანი:</strong></p>
+        <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="book-cover">
+    </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+                <small class="help-text">{{ field.help_text }}</small>
+            {% endif %}
+            {{ field.errors }}
+        </div>
+    {% endfor %}
+
+    {% if form.non_field_errors %}
+        <div class="errorlist">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-success">განახლება</button>
+    <a href="{% url 'book_detail' book.id %}" class="btn btn-primary">გაუქმება</a>
+</form>
+{% endblock %}

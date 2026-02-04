@@ -1,40 +1,65 @@
 {% extends 'base.html' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
 {% block content %}
 
-<a href="{% url 'book_list' %}">Back to books</a>
+<a href="{% url 'book_list' %}">&larr; უკან წიგნებზე</a>
 
 <h1>{{ book.title }}</h1>
-<div>Author: {{ book.author.name }}</div>
-<div>Published year: {{ book.published_year }}</div>
+
+{% if book.cover %}
+    <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="book-cover">
+{% endif %}
+
+<div class="mb-20">
+    <p><strong>ავტორი:</strong> {{ book.author.name }}</p>
+    <p><strong>გამოცემის წელი:</strong> {{ book.published_year|default:"უცნობი" }}</p>
+    <p>
+        <strong>სტატუსი:</strong>
+        {% if current_loan %}
+            <span class="badge badge-borrowed">გატანილია</span>
+        {% else %}
+            <span class="badge badge-available">ხელმისაწვდომი</span>
+        {% endif %}
+    </p>
+</div>
 
 {% if book.tags.all %}
-    <div>
-        Tags:
+    <div class="mb-20">
+        <strong>თეგები:</strong>
         {% for t in book.tags.all %}
-            <span>{{ t.name }}</span>
-        {% empty %}
-            <span>No tags</span>
+            <span class="tag">{{ t.name }}</span>
         {% endfor %}
     </div>
 {% endif %}
 
+<div class="mb-20">
+    <a href="{% url 'edit_book' book.id %}" class="btn btn-primary">რედაქტირება</a>
+</div>
+
 <hr>
 
 {% if current_loan %}
-    <h3>Currently borrowed</h3>
-    <div>Student: {{ current_loan.student.full_name }}</div>
-    <div>Borrowed at: {{ current_loan.borrowed_at }}</div>
+    <h3>გატანილია</h3>
+    <div class="book-card">
+        <p><strong>სტუდენტი:</strong> {{ current_loan.student.full_name }}</p>
+        <p><strong>გატანის თარიღი:</strong> {{ current_loan.borrowed_at|date:"d M Y, H:i" }}</p>
 
-    <form method="post" action="{% url 'library_return_loan' current_loan.id %}">
-        {% csrf_token %}
-        <button type="submit">Return</button>
-    </form>
+        <form method="post" action="{% url 'library_return_loan' current_loan.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">დაბრუნება</button>
+        </form>
+    </div>
 {% else %}
-    <h3>Borrow this book</h3>
-    <form method="post" action="{% url 'library_borrow_book' book.id %}">
+    <h3>წიგნის გატანა</h3>
+    <form method="post" action="{% url 'library_borrow_book' book.id %}" class="book-card">
         {% csrf_token %}
-        {{ borrow_form.student }}
-        <button type="submit">Borrow</button>
+        <div class="form-group">
+            <label for="{{ borrow_form.student.id_for_label }}">აირჩიე სტუდენტი:</label>
+            {{ borrow_form.student }}
+        </div>
+        <button type="submit" class="btn btn-primary">გატანა</button>
     </form>
 {% endif %}
 
