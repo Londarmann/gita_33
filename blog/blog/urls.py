@@ -18,20 +18,17 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path, include
 
-import library
+from django.contrib.auth import views as auth_views
+
 from blog import settings
 from djangoapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # blog
-    # path('', views.all_posts, name='all_post'),
-    path('add/', views.add_post, name='add_post'),
-    path('detail/<int:post_id>/', views.detail_post, name='detail_post'),
-    path('delete/<int:post_id>/', views.delete_post, name='delete_post'),
-    path('edit/<int:post_id>/', views.edit_post, name='edit_post'),
-    # library
     path('', include('library.urls')),
+    path('account/', include('accounts.urls')),
+    path('password-change/', auth_views.PasswordChangeView.as_view(), name='password_change')
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

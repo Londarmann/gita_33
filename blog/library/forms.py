@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django import forms
 
 from .models import Loan, Student, Book, Author
@@ -51,7 +53,21 @@ class BookForm(forms.ModelForm):
             'is_active': 'aktiuria tu ara',
         }
 
-    
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if len(title) < 3:
+            raise forms.ValidationError('min simboloebis raomdenoba unda ikos 3 ze meti')
+        return title
+
+    def clean_published_year(self):
+        year = self.cleaned_data['published_year']
+        year_num = datetime.now().year
+        if year > year_num:
+            raise forms.ValidationError(
+                f'axla aris {year_num} mititebuli celi aravaliduira miutitet {year_num}-ze naklebi')
+        return year
+
+
 class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
@@ -66,5 +82,3 @@ class AuthorForm(forms.ModelForm):
         'name': 'avtoris saxeli',
         'birth_year': 'dabadebis celi',
     }
-
-
