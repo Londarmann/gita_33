@@ -49,9 +49,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    # chveni damatebuli middleware
-    "library.middleware.RequestLoggingMiddleware",
-    "library.middleware.MaintenanceModeMiddleware"
+    # # chveni damatebuli middleware
+    # "library.middleware.RequestLoggingMiddleware",
+    # "library.middleware.MaintenanceModeMiddleware"
 ]
 
 ROOT_URLCONF = 'blog.urls'
