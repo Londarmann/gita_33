@@ -7,7 +7,6 @@ from .forms import BorrowForm, BookForm, AuthorForm
 from .models import Author, Book, Loan
 
 
-@login_required
 def book_list(request):
     q = request.GET.get('q', '').strip()
     author_id = request.GET.get('author', '').strip()
@@ -61,6 +60,11 @@ def book_detail(request, book_id):
     )
 
 
+from django.dispatch import Signal
+
+book_borrowed = Signal()
+
+
 def borrow_book(request, book_id):
     if request.method != 'POST':
         return redirect('book_detail', book_id=book_id)
@@ -70,10 +74,12 @@ def borrow_book(request, book_id):
         return redirect('book_detail', book_id=book_id)
 
     form = BorrowForm(request.POST)
+
     if form.is_valid():
         loan = form.save(commit=False)
         loan.book = book
         loan.save()
+
     return redirect('book_detail', book_id=book_id)
 
 
@@ -99,6 +105,7 @@ def add_book(request):
         form = BookForm()
     return render(request, 'library/add_book.html', {'form': form})
 
+
 @permission_required("library.edit_book")
 def edit_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
@@ -110,6 +117,7 @@ def edit_book(request, book_id):
     else:
         form = BookForm(instance=book)
     return render(request, 'library/edit_book.html', {'form': form, 'book': book})
+
 
 @permission_required("library.add_author")
 def add_author(request):
